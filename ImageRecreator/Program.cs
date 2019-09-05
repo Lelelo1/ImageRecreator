@@ -18,13 +18,14 @@ namespace ImageRecreator
         static void Main(string[] args)
         {
             Debug.WriteLine("start");
-            var urls = ImageUrls(10);
+            var urls = ImageUrls(10, "lowquality1");
             Debug.WriteLine("urls are...");
             urls.Print();
             var images = Images(urls);
             Debug.WriteLine("images created...");
             images.Print();
-
+            Debug.WriteLine("lowering quality...");
+            SaveJpeg("./myimg.jpg", images[10], 1);
             Debug.WriteLine("end");
         }
         
@@ -41,6 +42,7 @@ namespace ImageRecreator
             EncoderParameters encoderParams = new EncoderParameters(1);
             encoderParams.Param[0] = qualityParam;
             img.Save(path, jpegCodec, encoderParams);
+            
         }
         static ImageCodecInfo GetEncoderInfo(string mimeType)
         {
@@ -66,16 +68,26 @@ namespace ImageRecreator
             return list;
         }
 
-        // connecting to blob storage https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet
-        static List<String> ImageUrls(int amount)
+        
+        // fetch all images 
+        // https://stackoverflow.com/questions/30706550/azure-blob-storage-download-all-files
+        static List<String> ImageUrls(int amount, string and = null) // and - specify a specific url additionally
         {
-            return BlobContainer()
+            var blobItems = BlobContainer()
                 .ListBlobs()
-                .ToList()
-                .GetRange(0, amount)
+                .ToList();
+            var urls = blobItems.GetRange(0, amount)
                 .Select((blobItem) => blobItem.Uri.OriginalString).ToList();
+            if(and != null)
+            {
+                var found = blobItems.Find((blobItem) => blobItem.Uri.OriginalString.Contains(and));
+                urls.Add(found.Uri.OriginalString);
+            }
+            return urls;
+                
 
         }
+
         static string containerName = "images";
         static CloudBlobContainer BlobContainer()
         {
@@ -111,6 +123,3 @@ namespace ImageRecreator
         }
     }
 }
-
-// fetch all images 
-// https://stackoverflow.com/questions/30706550/azure-blob-storage-download-all-files
