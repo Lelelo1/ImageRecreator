@@ -15,23 +15,29 @@ namespace ImageRecreator
 {
     class Program
     {
+        static string testFolder = "./images";
         static void Main(string[] args)
         {
             Debug.WriteLine("start");
-            var urls = ImageUrls(10, "lowquality1");
+            var urls = ImageUrls(10);
             Debug.WriteLine("urls are...");
             urls.Print();
             var images = Images(urls);
             Debug.WriteLine("images created...");
             images.Print();
             Debug.WriteLine("lowering quality...");
-            SaveJpeg("./myimg.jpg", images[10], 1);
+            var lowImage = LowQuality(images[0], 1);
+            images[0].Save("./original.jpg");
+            lowImage.Save("./myjpg.jpg");
+
             Debug.WriteLine("end");
         }
         
         // https://stackoverflow.com/questions/4161873/reduce-image-size-c-sharp
-        static void SaveJpeg(string path, Image img, int quality)
+        static Image LowQuality(Bitmap image, int quality)
         {
+            // var img = new Bitmap(image); // can't use clone
+            var img = (Bitmap)image.Clone();
             if (quality < 0 || quality > 100)
                 throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
 
@@ -41,7 +47,11 @@ namespace ImageRecreator
             ImageCodecInfo jpegCodec = GetEncoderInfo("image/jpeg");
             EncoderParameters encoderParams = new EncoderParameters(1);
             encoderParams.Param[0] = qualityParam;
-            img.Save(path, jpegCodec, encoderParams);
+            var memoryStream = new MemoryStream();
+            img.Save(memoryStream, jpegCodec, encoderParams); https://stackoverflow.com/questions/22235156/reducing-jpeg-image-quality-without-saving
+            var lowQualityImage = Image.FromStream(memoryStream);
+            // memoryStream.Close(); causing error and does not seem to have to be called: https://stackoverflow.com/questions/4274590/memorystream-close-or-memorystream-dispose
+            return lowQualityImage;
             
         }
         static ImageCodecInfo GetEncoderInfo(string mimeType)
@@ -56,14 +66,16 @@ namespace ImageRecreator
 
             return null;
         }
+
         // https://stackoverflow.com/questions/11801630/how-can-i-convert-image-url-to-system-drawing-image
-        static List<Image> Images(List<string> imageUrls)
+        static List<Bitmap> Images(List<string> imageUrls)
         {
             var webClient = new WebClient();
-            var list = new List<Image>();
+            var list = new List<Bitmap>();
             foreach (var url in imageUrls)
-            {   
-                list.Add(Image.FromStream(new MemoryStream(webClient.DownloadData(url))));
+            {
+                var image = (Bitmap)Image.FromStream(new MemoryStream(webClient.DownloadData(url)));
+                list.Add(image);
             }
             return list;
         }
@@ -114,7 +126,7 @@ namespace ImageRecreator
                 Debug.WriteLine(url);
             }
         }
-        public static void Print(this List<Image> list)
+        public static void Print(this List<Bitmap> list)
         {
             foreach (var image in list)
             {
