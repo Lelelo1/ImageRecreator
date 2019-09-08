@@ -19,6 +19,7 @@ namespace ImageRecreator
         static void Main(string[] args)
         {
             Debug.WriteLine("start");
+            /*
             var urls = ImageUrls(10);
             Debug.WriteLine("urls are...");
             urls.Print();
@@ -29,14 +30,16 @@ namespace ImageRecreator
             var lowImage = LowQuality(images[0], 1);
             images[0].Save("./original.jpg");
             lowImage.Save("./myjpg.jpg");
-
+            */
+            CreateTrainingSet.Create();
+            // Consume.Run();
             Debug.WriteLine("end");
         }
         
         // https://stackoverflow.com/questions/4161873/reduce-image-size-c-sharp
         static Image LowQuality(Bitmap image, int quality)
         {
-            // var img = new Bitmap(image); // can't use clone
+            //var img = new Bitmap(image); // can't use clone
             var img = (Bitmap)image.Clone();
             if (quality < 0 || quality > 100)
                 throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
