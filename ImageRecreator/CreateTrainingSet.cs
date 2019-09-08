@@ -41,36 +41,26 @@ namespace ImageRecreator
             */
             // Color.FromArgb()
             // creating schema https://github.com/dotnet/machinelearning/issues/164
-            var schemaDef = SchemaDefinition.Create(typeof(Data));
+            // var schemaDef = SchemaDefinition.Create(typeof(ImageInput));
             /*
             schemaDef["Features"].ColumnType = new VectorDataViewType(NumberDataViewType.Single, 10)
             schemaDef["Label"].ColumnType = new VectorDataViewType(NumberDataViewType.Single, 10);
             */
-            
+            /*
             schemaDef["Features"].ColumnType = new VectorDataViewType(NumberDataViewType.Single, 2);
             schemaDef["Label"].ColumnType = new VectorDataViewType(NumberDataViewType.Single, 2);
+            */
+            /*
+            var pipeline = context.Transforms.
 
-            var data = new Data() { low = new float[] { 0.1f,  }, original = new float[] { 2f, 2f } };
-            var list = new Data[15];
-            for(int i = 0; i < 10; i++)
-            {
-                Debug.WriteLine("i: " + i);
-                list[i] = data;
-            }
-            list[10] = new Data() { low = new float[] { 0.3f, 0.3f }, original = new float[] { 6f, 6f } };
-            list[11] = new Data() { low = new float[] { 0.08f, 0.08f }, original = new float[] { 0.8f, 0.8f } };
-            list[12] = new Data() { low = new float[] { 0.5f, 0.5f }, original = new float[] { 10f, 10f } };
-            list[13] = new Data() { low = new float[] { 0.2f, 0.2f }, original = new float[] { 4f, 4f } };
-            list[14] = new Data() { low = new float[] { 0.06f, 0.06f }, original = new float[] { 0.6f, 0.6f } };
-            var dataProcessPipeline = context.Transforms.CopyColumns("Features", "Label");
+            var trainingDataView = context.Data.LoadFromEnumerable<ImageInput>(new ImageInput[] { });
+            // var trainer = context.;
+            var model = pipeline.Fit(trainingDataView);
 
-            var trainingDataView = context.Data.LoadFromEnumerable<Data>(list, schemaDef);
-            var trainer = context.Regression.Trainers.Sdca();
-
-            var trainingPipeline = dataProcessPipeline.Append(trainer);
-
-            var trainedModel = trainingPipeline.Fit(trainingDataView);
-            context.Model.Save(trainedModel, trainingDataView.Schema, "./mymodel.zip");
+            var predictionEngine = context.Model.CreatePredictionEngine<Data, OutputData>(model);
+            */
+            //  var trainedModel = trainingPipeline.Fit(trainingDataView);
+            // context.Model.Save(trainedModel, trainingDataView.Schema, "./mymodel.zip");
             /* crash */
             // using automl api https://docs.microsoft.com/en-us/dotnet/machine-learning/how-to-guides/how-to-use-the-automl-api
             /*

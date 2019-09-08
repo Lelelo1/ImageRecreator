@@ -1,30 +1,17 @@
 ﻿using Microsoft.ML.Data;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace ImageRecreator
 {
     public class Data
     {
-        /*
-        [VectorType]
-        public float[,] low;
-        [VectorType]
-        public float[,] original;
-        */
-
-        [ColumnName("Features")]
-        public float[] low;
-        [ColumnName("Label")]
-
-        public float[] original;
-    }
-    public class OutputData
-    {
-        [ColumnName("Label")]
-        public float[] predicted;
-        [ColumnName("Score")]
-        public float score;
+        // public float[] total; or bitmap
+        public Bitmap total;
+        public int [] index;
+        public float value;
+        public float original; // label
     }
 }

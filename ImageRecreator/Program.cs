@@ -33,42 +33,15 @@ namespace ImageRecreator
             */
             CreateTrainingSet.Create();
             // Consume.Run();
+            var originalUrl = ImageUrls(1);
+            var original = Images(originalUrl)[0];
+            original.Name("MyImage");
+            original.LowQualityImages(12);
+
             Debug.WriteLine("end");
         }
         
-        // https://stackoverflow.com/questions/4161873/reduce-image-size-c-sharp
-        static Image LowQuality(Bitmap image, int quality)
-        {
-            //var img = new Bitmap(image); // can't use clone
-            var img = (Bitmap)image.Clone();
-            if (quality < 0 || quality > 100)
-                throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
-
-            // Encoder parameter for image quality 
-            EncoderParameter qualityParam = new EncoderParameter(Encoder.Quality, quality);
-            // JPEG image codec 
-            ImageCodecInfo jpegCodec = GetEncoderInfo("image/jpeg");
-            EncoderParameters encoderParams = new EncoderParameters(1);
-            encoderParams.Param[0] = qualityParam;
-            var memoryStream = new MemoryStream();
-            img.Save(memoryStream, jpegCodec, encoderParams); https://stackoverflow.com/questions/22235156/reducing-jpeg-image-quality-without-saving
-            var lowQualityImage = Image.FromStream(memoryStream);
-            // memoryStream.Close(); causing error and does not seem to have to be called: https://stackoverflow.com/questions/4274590/memorystream-close-or-memorystream-dispose
-            return lowQualityImage;
-            
-        }
-        static ImageCodecInfo GetEncoderInfo(string mimeType)
-        {
-            // Get image codecs for all image formats 
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
-
-            // Find the correct image codec 
-            for (int i = 0; i < codecs.Length; i++)
-                if (codecs[i].MimeType == mimeType)
-                    return codecs[i];
-
-            return null;
-        }
+        
 
         // https://stackoverflow.com/questions/11801630/how-can-i-convert-image-url-to-system-drawing-image
         static List<Bitmap> Images(List<string> imageUrls)
