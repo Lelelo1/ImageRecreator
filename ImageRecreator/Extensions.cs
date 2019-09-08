@@ -11,13 +11,18 @@ namespace ImageRecreator
     public static class Extensions
     {
 
-        
-        public static List<Image> LowQualityImages(this Bitmap image, int amount)
+        public static void Print(this Data d)
         {
-            var list = new List<Image>();
-            int parts = 100 / amount - 1; // since starting from 0
+            Console.WriteLine("total: " + d.total.Name() +
+                ", index: (x: " + d.index[0] + ", y: " + d.index[1] + "), value: " + d.value + ", original: " + d.original);
+        }
+        
+        public static List<Bitmap> LowQualityImages(this Bitmap image, int parts)
+        {
+            var list = new List<Bitmap>();
+            int s = 100 / parts; // since starting from 0
             Debug.WriteLine("parts: " + parts);
-            for(int q = 0; q < 100; q += parts)
+            for(int q = 0; q < 100; q += s)
             {
                 list.Add(LowQualityImage(image, q));
                 Debug.WriteLine("quality: " + q);
@@ -28,7 +33,7 @@ namespace ImageRecreator
         }
         
         // https://stackoverflow.com/questions/4161873/reduce-image-size-c-sharp
-        static Image LowQualityImage(Bitmap image, int quality)
+        static Bitmap LowQualityImage(Bitmap image, int quality)
         {
             //var img = new Bitmap(image); // can't use clone
             var img = (Bitmap)image.Clone();
@@ -43,7 +48,7 @@ namespace ImageRecreator
             encoderParams.Param[0] = qualityParam;
             var memoryStream = new MemoryStream();
             img.Save(memoryStream, jpegCodec, encoderParams); https://stackoverflow.com/questions/22235156/reducing-jpeg-image-quality-without-saving
-            var lowQualityImage = Image.FromStream(memoryStream);
+            var lowQualityImage = (Bitmap)Image.FromStream(memoryStream);
             // memoryStream.Close(); causing error and does not seem to have to be called: https://stackoverflow.com/questions/4274590/memorystream-close-or-memorystream-dispose
             return lowQualityImage;
 

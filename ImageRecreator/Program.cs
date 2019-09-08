@@ -10,7 +10,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using System.Net;
 using System.IO;
-
+using System.Linq;
 namespace ImageRecreator
 {
     class Program
@@ -34,9 +34,9 @@ namespace ImageRecreator
             CreateTrainingSet.Create();
             // Consume.Run();
             var originalUrl = ImageUrls(1);
-            var original = Images(originalUrl)[0];
-            original.Name("MyImage");
-            original.LowQualityImages(12);
+            var originals = Images(originalUrl);
+            originals[0].Name("MyImage");
+            Train.Run(originals);
 
             Debug.WriteLine("end");
         }

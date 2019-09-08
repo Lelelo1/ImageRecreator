@@ -12,6 +12,6 @@ namespace ImageRecreator
         public Bitmap total;
         public int [] index;
         public float value;
-        public float original; // label
+        public float original;
     }
 }
