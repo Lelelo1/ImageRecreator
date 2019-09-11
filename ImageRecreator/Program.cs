@@ -35,7 +35,7 @@ namespace ImageRecreator
             // Consume.Run();
             var originalUrl = ImageUrls(1);
             var originals = Images(originalUrl);
-            originals[0].Name("MyImage");
+            originals[0].Name("MyImage0");
             Train.Run(originals);
 
             Debug.WriteLine("end");

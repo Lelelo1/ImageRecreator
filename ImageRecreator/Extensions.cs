@@ -6,15 +6,41 @@ using System.Linq;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Diagnostics;
+using Microsoft.ML.AutoML;
+using Microsoft.ML.Data;
+
 namespace ImageRecreator
 {
     public static class Extensions
     {
 
+        public static void Print(this ExperimentResult<RegressionMetrics> result)
+        {
+            Console.WriteLine("Regession metric...");
+            var details = result.RunDetails.ToList();
+            Console.WriteLine("details");
+            foreach(var detail in details)
+            {
+                Console.WriteLine(detail);
+            }
+            Console.WriteLine("best run");
+            Console.WriteLine(result.BestRun);
+            Console.WriteLine("trainerName " + result.BestRun.TrainerName);
+            Console.WriteLine("validationMetrics " + result.BestRun.ValidationMetrics);
+
+        }
+        /// <summary>
+        ///  need updating.
+        /// </summary>
+        /// <param name="d"></param>
         public static void Print(this Data d)
         {
+            /*
             Console.WriteLine("total: " + d.total.Name() +
                 ", index: (x: " + d.index[0] + ", y: " + d.index[1] + "), value: " + d.value + ", original: " + d.original);
+                */
+            Console.WriteLine("total: " + d.total.Name() +
+            ", index: (x: " + d.x + ", y: " + d.y + "), value: " + d.value + ", original: " + d.original);
         }
         
         public static List<Bitmap> LowQualityImages(this Bitmap image, int parts)
@@ -66,6 +92,7 @@ namespace ImageRecreator
             return null;
         }
 
+   
         static List<TestImage> list = new List<TestImage>();
         public static void Name(this Bitmap bitmap, string name) {
             if (list.Exists((t) => t.bitmap == bitmap || t.name == name)) {
@@ -77,6 +104,37 @@ namespace ImageRecreator
         public static string Name(this Bitmap bitmap)
         {
             return list.Find((t) => t.bitmap == bitmap).name;
+        }
+        public static string Name(this float[] imageFloatArray)
+        {
+            return list.Find((t) => Enumerable.SequenceEqual(t.bitmap.ToFloatArray(), imageFloatArray)).name;
+        }
+        public static float[] ToFloatArray(this Bitmap image)
+        {
+            var array = new float[image.Width * image.Height];
+            for(int i = 0; i < array.Length; i ++)
+            {
+                for (int x = 0; x < image.Width; x++)
+                {
+                    for (int y = 0; y < image.Height; y++)
+                    {
+                        array[i] = image.GetPixel(x, y).ToArgb();
+                    }
+                }
+            }
+            return array;
+        }
+        public static float[,] To2DFloatArray(this Bitmap image)
+        {
+            var array = new float[image.Width, image.Height];
+            for(int x = 0; x < image.Width; x ++)
+            {
+                for(int y = 0; y < image.Height; y ++)
+                {
+                    array[x, y] = image.GetPixel(x, y).ToArgb();
+                }
+            }
+            return array;
         }
     }
     class TestImage

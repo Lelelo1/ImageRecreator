@@ -1,0 +1,1 @@
+Sdca myimg0: myimgq0 & myimgq1 => tid: , proccessmemory: 165mb, CPU: 50%.
