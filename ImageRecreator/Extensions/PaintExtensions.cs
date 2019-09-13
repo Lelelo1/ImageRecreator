@@ -8,18 +8,19 @@ namespace ImageRecreator
     public static class PaintExtensions
     {
 
-        public static Bitmap Paint(this int[] oneDimensionalValueArray, int width, int height)
+        public static Bitmap Paint(this float[] oneDimensionalValueArray, int width, int height)
         {
             // original/imageToRecreate bounds is the same bounds as any low copy
 
-            int[,] paintArray = new int [width, height];
-            Buffer.BlockCopy(oneDimensionalValueArray, 0, paintArray, 0, paintArray.Length * sizeof(int));
+            float[,] paintArray = new float [width, height];
+            Buffer.BlockCopy(oneDimensionalValueArray, 0, paintArray, 0, paintArray.Length * sizeof(float));
 
             Bitmap bitmap = new Bitmap(width, height);
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++) {
-                    bitmap.SetPixel(x, y, Color.FromArgb(paintArray[x, y]));
+ 
+                    bitmap.SetPixel(x, y, Color.FromArgb((int)paintArray[x, y]));
                 }
             }
             return bitmap;

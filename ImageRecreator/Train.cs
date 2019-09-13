@@ -19,7 +19,8 @@ namespace ImageRecreator
             var imageData = new List<Data>();
             foreach(var original in originalImages)
             {
-                imageData.AddRange(ImageData(original, original.LowQualityImages(2), 0.01f));
+                // 0.001f takes 2 min
+                imageData.AddRange(ImageData(original, original.LowQualityImages(2), 0.001f));
             }
             /*
             for (int i = 0; i < imageData.Count; i += 100000)
@@ -37,11 +38,8 @@ namespace ImageRecreator
             schema["Label"].ColumnType = NumberDataViewType.Single;
             */
             // varvector complaint
-            
-            foreach(var d in imageData)
-            {
-                d.Print();
-            }
+
+            Debug.WriteLine("imageData count: " + imageData.Count);
             var trainingDataView = mlContext.Data.LoadFromEnumerable<Data>(imageData);
             Debug.WriteLine("starting training");
             var dataProccessPipeLine = mlContext.Transforms.CopyColumns("Label", "Label")
@@ -73,13 +71,16 @@ namespace ImageRecreator
             return imageData;
         }
 
-        static List<Data> CreateDataFrom(Bitmap original, Bitmap lowImage, float percent)
+        static List<Data> CreateDataFrom(Bitmap original, Bitmap lowImage, float percent = 1)
         {
             Debug.WriteLine("Creating data...");
             var imageData = new List<Data>();
-            var lowImageArray = lowImage.ToFloatArray();
+
+
+            // getting random indexes
+            var lowImageArray = lowImage.ToValueArray();
             Debug.WriteLine("lowImageArray created");
-            var amount = (int )Math.Round(percent / lowImageArray.Count());
+            var amount = (int )Math.Round(percent * lowImageArray.Count());
             Debug.WriteLine("Taking amount: " + amount);
             
             int index = 0;
@@ -87,25 +88,31 @@ namespace ImageRecreator
             {
                 var randomX = RandomizedIndex(lowImage.Width);
                 var randomY = RandomizedIndex(lowImage.Height);
-
+                // Debug.WriteLine("i: " + index + ". x: " + randomX + " and y:" + randomY);
                 var data = new Data
                 {
-                    total = lowImageArray,
+                    // total = lowImageArray,
                     x = randomX,
                     y = randomY,
                     value = lowImage.GetPixel(randomX, randomY).ToArgb(),
                     original = original.GetPixel(randomX, randomY).ToArgb()
                 };
 
-                if(!imageData.Contains(data))
+                if(!imageData.Exists((d) => d.x != data.x && d.y != data.y))
                 {
-                    data.Print();
+                    // data.Print();
                     imageData.Add(data);
                     index++;
                 }
                 data = null;
             }
+            Debug.WriteLine("adding total to data...");
+            foreach(var d in imageData)
+            {
+                d.total = lowImageArray; // <-- added afterwards is faster due to .exists
+            }
             Debug.WriteLine("created " + imageData.Count + " of imageData from " + lowImage.Name());
+            
             /*
             for (int x = 0; x < lowImage.Width; x++)
             {
@@ -130,7 +137,10 @@ namespace ImageRecreator
         private static Random random = new Random();
         static int RandomizedIndex(int length)
         {
-            return random.Next(0, length - 1);
+
+            int r = random.Next(0, length - 1);
+  
+            return r;
         }
         //static Pixel Pixel()
         static void Data()
