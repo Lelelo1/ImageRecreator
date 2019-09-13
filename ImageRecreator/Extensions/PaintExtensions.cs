@@ -19,7 +19,7 @@ namespace ImageRecreator
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++) {
-                    bitmap.SetPixel(x, y, Color.FromArgb(paintArray[0, 0]));
+                    bitmap.SetPixel(x, y, Color.FromArgb(paintArray[x, y]));
                 }
             }
             return bitmap;

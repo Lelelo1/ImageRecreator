@@ -31,15 +31,16 @@ namespace ImageRecreator
             images[0].Save("./original.jpg");
             lowImage.Save("./myjpg.jpg");
             */
-            
+            /*
             CreateTrainingSet.Create();
             // Consume.Run();
             var originalUrl = ImageUrls(1);
             var originals = Images(originalUrl);
             originals[0].Name("MyImage0");
             Train.Run(originals);
-            
-            /* testing paint method. works. And argb is a range value 
+            */
+
+            // testing paint method. works. And argb is a range value 
             var originalUrls = ImageUrls(1);
             var originals = Images(originalUrls);
             originals[0].Name("MyImage0");
@@ -48,7 +49,8 @@ namespace ImageRecreator
             lowQualityImages[0].Save("./" + lowQualityImages[0].Name() + ".jpg");
             var paintImage = lowQualityImages[0].ToFloatArray().Paint(originals[0].Width, originals[0].Height);
             paintImage.Save("./myimage.jpg");
-            */
+            
+
             /*
             var my2DArray = new int[3, 2];
             my2DArray[0, 0] = 1;
