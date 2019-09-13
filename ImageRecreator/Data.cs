@@ -20,15 +20,15 @@ namespace ImageRecreator
         public float [,] index;
         */
         [ColumnName("Total")]
-        public float[] total;
+        public int[] total;
         [ColumnName("X")]
-        public float x;
+        public int x;
         [ColumnName("Y")]
-        public float y;
+        public int y;
         [ColumnName("Value")]
-        public float value;
+        public int value;
         [ColumnName("Label")]
-        public float original;
+        public int original;
 
         /* When running automl... Was also unable to run b total as bitmap
          * System.ArgumentException: 'Only supported feature column types are Boolean, Single, and String. Please change the feature column index of type Vector<Int32> to one of the supported types.

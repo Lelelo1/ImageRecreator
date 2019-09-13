@@ -31,13 +31,64 @@ namespace ImageRecreator
             images[0].Save("./original.jpg");
             lowImage.Save("./myjpg.jpg");
             */
+            
             CreateTrainingSet.Create();
             // Consume.Run();
             var originalUrl = ImageUrls(1);
             var originals = Images(originalUrl);
             originals[0].Name("MyImage0");
             Train.Run(originals);
+            
+            /* testing paint method. works. And argb is a range value 
+            var originalUrls = ImageUrls(1);
+            var originals = Images(originalUrls);
+            originals[0].Name("MyImage0");
+            var lowQualityImages = originals[0].LowQualityImages(2);
+            lowQualityImages[0].Name("MyImage0q0");
+            lowQualityImages[0].Save("./" + lowQualityImages[0].Name() + ".jpg");
+            var paintImage = lowQualityImages[0].ToFloatArray().Paint(originals[0].Width, originals[0].Height);
+            paintImage.Save("./myimage.jpg");
+            */
+            /*
+            var my2DArray = new int[3, 2];
+            my2DArray[0, 0] = 1;
+            my2DArray[1, 0] = 2;
+            my2DArray[2, 0] = 3;
+            my2DArray[0, 1] = 4;
+            my2DArray[1, 1] = 5;
+            my2DArray[2, 1] = 6;
 
+            Console.WriteLine("original 2DArray...");
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 2; y++)
+                {
+                    Console.WriteLine(my2DArray[x, y]);
+                }
+            }
+
+
+            var my1DArray = new int[3 * 2];
+            Buffer.BlockCopy(my2DArray, 0, my1DArray, 0, my1DArray.Length * sizeof(int));
+            Console.WriteLine("one dimensional array...");
+            foreach (var v in my1DArray)
+            {
+                Console.WriteLine(v);
+            }
+
+            var backTo2DArray = new int[3, 2];
+
+            Buffer.BlockCopy(my1DArray, 0, backTo2DArray, 0, backTo2DArray.Length * sizeof(int));
+
+            Console.WriteLine("backTo2DArray...");
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 2; y++)
+                {
+                    Console.WriteLine(backTo2DArray[x, y]);
+                }
+            }
+            */
             Debug.WriteLine("end");
         }
         

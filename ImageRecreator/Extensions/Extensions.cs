@@ -42,7 +42,7 @@ namespace ImageRecreator
             Console.WriteLine("total: " + d.total.Name() +
             ", index: (x: " + d.x + ", y: " + d.y + "), value: " + d.value + ", original: " + d.original);
         }
-        
+ 
         public static List<Bitmap> LowQualityImages(this Bitmap image, int parts)
         {
             var list = new List<Bitmap>();
@@ -105,14 +105,15 @@ namespace ImageRecreator
         {
             return list.Find((t) => t.bitmap == bitmap).name;
         }
-        public static string Name(this float[] imageFloatArray)
+        public static string Name(this int[] imageFloatArray)
         {
             return list.Find((t) => Enumerable.SequenceEqual(t.bitmap.ToFloatArray(), imageFloatArray)).name;
         }
-        public static float[] ToFloatArray(this Bitmap image)
+        public static int[] ToFloatArray(this Bitmap image)
         {
-            var array = new float[image.Width * image.Height];
-            for(int i = 0; i < array.Length; i ++)
+            var array = new int[image.Width * image.Height];
+            /* too slow
+            for (int i = 0; i < array.Length; i ++)
             {
                 for (int x = 0; x < image.Width; x++)
                 {
@@ -122,21 +123,35 @@ namespace ImageRecreator
                     }
                 }
             }
+            */
+
+            var float2DArray = image.To2DFloatArray();
+
+        https://stackoverflow.com/questions/5132397/fast-way-to-convert-a-two-dimensional-array-to-a-list-one-dimensional
+            // buffer copy does not effect the order of the elements - so 2d -> 1d -> 2D is possible.
+            Buffer.BlockCopy(float2DArray, 0, array, 0, array.Length * sizeof(int));
+
             return array;
         }
-        public static float[,] To2DFloatArray(this Bitmap image)
+        public static int[,] To2DFloatArray(this Bitmap image)
         {
-            var array = new float[image.Width, image.Height];
+            var array = new int[image.Width, image.Height];
             for(int x = 0; x < image.Width; x ++)
             {
                 for(int y = 0; y < image.Height; y ++)
                 {
+                    var pixel = image.GetPixel(x, y);
+                    Color.FromArgb(pixel.ToArgb());
+                    
                     array[x, y] = image.GetPixel(x, y).ToArgb();
                 }
             }
             return array;
         }
+
+
     }
+    
     class TestImage
     {
         public Bitmap bitmap;
