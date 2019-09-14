@@ -31,13 +31,16 @@ namespace ImageRecreator
             images[0].Save("./original.jpg");
             lowImage.Save("./myjpg.jpg");
             */
+
+
             
-            // CreateTrainingSet.Create();
-            // Consume.Run();
-            
-            var originalUrl = ImageUrls(1);
+            // train
+            var originalUrl = ImageUrls(200);
             var originals = Images(originalUrl);
-            originals[0].Name("MyImage0");
+            for(int i = 0; i < originalUrl.Count; i++)
+            {
+                originals[i].Name(originalUrl[i]);
+            }
             Train.Run(originals);
             
 
@@ -51,9 +54,31 @@ namespace ImageRecreator
             lowQualityImages[0].Save("./" + lowQualityImages[0].Name() + ".jpg");
             var paintImage = lowQualityImages[0].ToValueArray().Paint(originals[0].Width, originals[0].Height);
             paintImage.Save("./myimage.jpg");
-            */
+            
 
+            /*
+            //consume
+            var urls = ImageUrls(1);
+            var original = Images(urls)[0];
+            original.Name("myimg");
+            var lowQuality = original.LowQualityImages(2)[1];
+            lowQuality.Name("myimgq0");
+            var restored = lowQuality.Restore(original);
+            original.Save("myimg.jpg");
+            lowQuality.Save("myimgq0.jpg");
+            restored.Save("myimgq0r.jpg");
             Debug.WriteLine("end");
+            */
+            /*
+            // is there more white (-1) in orginal than in original? Yes, original: 325525 and q0: 638055
+            var urls = ImageUrls(1);
+            var original = Images(urls)[0];
+            original.Name("myimg");
+            Debug.WriteLine("original argb -1 count: " + original.GetPixelsCountOf(-1));
+            var lowQuality = original.LowQualityImages(2)[0];
+            lowQuality.Name("myimgq0");
+            Debug.WriteLine("low quality q0 -1 count: " + lowQuality.GetPixelsCountOf(-1));
+            */
         }
         
         

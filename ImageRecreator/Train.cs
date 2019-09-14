@@ -20,7 +20,7 @@ namespace ImageRecreator
             foreach(var original in originalImages)
             {
                 // 0.001f takes 2 min
-                imageData.AddRange(ImageData(original, original.LowQualityImages(2), 0.001f));
+                imageData.AddRange(ImageData(original, original.LowQualityImages(100), 0.01f));
             }
             /*
             for (int i = 0; i < imageData.Count; i += 100000)
@@ -43,7 +43,7 @@ namespace ImageRecreator
             var trainingDataView = mlContext.Data.LoadFromEnumerable<Data>(imageData);
             Debug.WriteLine("starting training");
             var dataProccessPipeLine = mlContext.Transforms.CopyColumns("Label", "Label")
-                .Append(mlContext.Transforms.Concatenate("Features", "Total", "X", "Y", "Value"));
+                .Append(mlContext.Transforms.Concatenate("Features","Average", "X", "Y", "Value"));
 
             var trainer = mlContext.Regression.Trainers.Sdca(labelColumnName: "Label", featureColumnName: "Features");
 
@@ -89,16 +89,17 @@ namespace ImageRecreator
                 var randomX = RandomizedIndex(lowImage.Width);
                 var randomY = RandomizedIndex(lowImage.Height);
                 // Debug.WriteLine("i: " + index + ". x: " + randomX + " and y:" + randomY);
+                int value = lowImage.GetPixel(randomX, randomY).ToArgb();
+                int originalValue = original.GetPixel(randomX, randomY).ToArgb();
                 var data = new Data
                 {
                     // total = lowImageArray,
                     x = randomX,
                     y = randomY,
-                    value = lowImage.GetPixel(randomX, randomY).ToArgb(),
-                    original = original.GetPixel(randomX, randomY).ToArgb()
+                    value = value,
+                    original = originalValue
                 };
-
-                if(!imageData.Exists((d) => d.x != data.x && d.y != data.y))
+                if(!imageData.Exists((d) => (int)d.x != (int)data.x && (int)d.y != (int)data.y)) // not taking -1
                 {
                     // data.Print();
                     imageData.Add(data);
@@ -106,10 +107,13 @@ namespace ImageRecreator
                 }
                 data = null;
             }
-            Debug.WriteLine("adding total to data...");
+            Debug.WriteLine("adding total/average to data...");
+            
+            var average = lowImageArray.Average();
+            Debug.WriteLine(average);
             foreach(var d in imageData)
             {
-                d.total = lowImageArray; // <-- added afterwards is faster due to .exists
+                d.average = average; // <-- added afterwards is faster due to .exists
             }
             Debug.WriteLine("created " + imageData.Count + " of imageData from " + lowImage.Name());
             

@@ -1,13 +1,17 @@
 ﻿using Microsoft.ML;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
+using System.Diagnostics;
+using System.Linq;
+using ImageRecreator;
 
 namespace ImageRecreator
 {
-    public class Consume
+    public class Consume // use ComsumeExtensions instead?
     {
-        public static  void Run()
+        public static void Run()
         {
             var mlContext = new MLContext();
             DataViewSchema predictionPipelineSchema;
@@ -19,5 +23,7 @@ namespace ImageRecreator
 
             // Console.WriteLine("prediction: " + output.predicted + " with score: " + output.score);
         }
+   
+       
     }
 }

@@ -1,5 +1,24 @@
-Sdca myimg0: myimgq0 & myimgq1 => tid: , proccessmemory: 165mb, CPU: 50%.
+check if argb is a range - so that + 1 tunes the color Yes
 
 ---
 
-check if argb is a range - so that + 1 tunes the color
+lowimage has double amount of -1 (white) than original.
+
+---
+
+model trained with white and with a faulty if float comparison made resulted in myimgq0rwhitewhite.jpg
+
+---
+
+... myimgq0rwithoutwhite.jpg
+
+---
+
+When not using average the horizontal lines appeared. They where also present when using wrong float comparison in train
+
+One strategy is to include as much info as possible in Data and run automl
+
+--
+0.0001f, parts 5, 10 original images:
+
+not much difference. no horizontal lines.

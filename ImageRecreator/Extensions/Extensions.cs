@@ -31,17 +31,10 @@ namespace ImageRecreator
         }
         public static void Print(this Data d)
         {
-            if(d.total == null)
-            {
-                // console buggy?
-                System.Diagnostics.Debug.WriteLine(", index: (x: " + d.x + ", y: " + d.y + "), value: " + d.value + ", original: " + d.original);
-            }
-            else
-            {
-                Console.WriteLine("total: " + d.total.Name() +
+
+            Console.WriteLine("average: " + d.average +
             ", index: (x: " + d.x + ", y: " + d.y + "), value: " + d.value + ", original: " + d.original);
-            }
-            
+
         }
  
         public static List<Bitmap> LowQualityImages(this Bitmap image, int parts)

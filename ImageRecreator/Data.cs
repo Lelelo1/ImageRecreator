@@ -19,8 +19,12 @@ namespace ImageRecreator
         [ColumnName("Index")]
         public float [,] index;
         */
+        /*
         [ColumnName("Total")]// try using average color
         public float[] total;
+        */
+        [ColumnName("Average")]
+        public float average;
         [ColumnName("X")]
         public float x;
         [ColumnName("Y")]
