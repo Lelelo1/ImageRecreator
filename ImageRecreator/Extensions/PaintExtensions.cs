@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Text;
-
+using System.Diagnostics;
 namespace ImageRecreator
 {
     public static class PaintExtensions
@@ -37,6 +38,23 @@ namespace ImageRecreator
             }
             return bitmap;
         }
+        /* */
+        public static Bitmap Paint(this Bitmap bitmap, int value)
+        {
+            var byteArray = value.toBytes();
+            foreach(var b in byteArray)
+            {
+                Debug.WriteLine("byte: " + b);
+            }
+            for(int x = 0; x < bitmap.Width; x ++)
+            {
+                for(int y = 0; y < bitmap.Height; y ++)
+                {
+                    bitmap.SetPixel(x, y, Color.FromArgb(byteArray[3], byteArray[0], byteArray[1], byteArray[2]));
+                }
+            }
+            return bitmap;
+        }
         public static void Paint(List<Data> imageData)
         {
             /*
@@ -60,5 +78,44 @@ namespace ImageRecreator
             }
             return count;
         }
+
+        public static Bitmap Random(this Bitmap bitmap)
+        {
+            for(int x = 0; x < bitmap.Width; x ++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    var r = Random();
+                    var g = Random();
+                    var b = Random();
+                    var a = Random();
+                    // Debug.WriteLine("random color: " + r + ", " + g + " , " + b + ", " + a);
+                    bitmap.SetPixel(x, y, Color.FromArgb(r, g, b, a));
+                }
+            }
+            return bitmap;
+        }
+        private static Random random = new Random();
+        static int Random()
+        {
+            return random.Next(0, 255);
+        }
+
+        // https://stackoverflow.com/questions/1068373/how-to-calculate-the-average-rgb-color-values-of-a-bitmap
+        public static Color GetAverageColor(this Bitmap image)
+        {
+            Bitmap bmp = new Bitmap(1, 1);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                // updated: the Interpolation mode needs to be set to 
+                // HighQualityBilinear or HighQualityBicubic or this method
+                // doesn't work at all.  With either setting, the results are
+                // slightly different from the averaging method.
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(image, new Rectangle(0, 0, 1, 1));
+            }
+            return bmp.GetPixel(0, 0);
+        }
     }
+
 }

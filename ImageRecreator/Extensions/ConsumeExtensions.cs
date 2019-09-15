@@ -25,12 +25,16 @@ namespace ImageRecreator
             PredictionEngine<Data, OutputData> predictionEngine = mlContext.Model.CreatePredictionEngine<Data, OutputData>(predictionPipeline);
 
             Debug.WriteLine("Predicting and constructing bitmap...");
-            for (int x = 0; x < width; x++)
+            for (int x = 300; x < width; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 200; y < height; y++)
                 {
                     var data = dataArray[x, y];
-                    var output = predictionEngine.Predict(dataArray[x, y]);
+                    var output = predictionEngine.Predict(data);
+
+                    // just to to log comparison
+                    var originalColor = original.GetPixel(x, y);
+                    var originalColorValue = new byte[4] { originalColor.R, originalColor.G, originalColor.B, originalColor.A }.toInt();
                     /*
                     if (original == null)
                     {
@@ -38,11 +42,13 @@ namespace ImageRecreator
                     }
                     else
                     {
-                        Debug.WriteLine("value: " + data.value + " -> " + " output: " 
-                            + output.outputValue + ". original: " + original.GetPixel(x, y).ToArgb());
+                        Debug.WriteLine("value: " + (int)data.value + " -> " + " output: "
+                            + (int)output.outputValue + ". original: " + (int)originalColorValue);
                     }
                     */
-                    predictedBitmap.SetPixel(x, y, Color.FromArgb((int) output.outputValue));
+                    var byteArray = BitConverter.GetBytes(output.outputValue);
+
+                    predictedBitmap.SetPixel(x, y, Color.FromArgb(byteArray[3] ,byteArray[0], byteArray[1], byteArray[2]));
                 }
             }
             Debug.WriteLine("completed");
@@ -63,21 +69,30 @@ namespace ImageRecreator
 
             var dataArray = new Data[width, height];
 
-            
-            var average = lowQuality.ToValueArray().Average();
+            var averageColor = lowQuality.GetAverageColor();
+            var average = new byte[4] { averageColor.R, averageColor.G, averageColor.B, averageColor.A }.toInt();
+
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
+                    var valueColor = lowQuality.GetPixel(x, y);
+                    // Debug.WriteLine("r: " + valueColor.R + ", g: " + valueColor.G + ", b: " + valueColor.B + ", a: " + valueColor.A);
+                    var value = new byte[4] { valueColor.R, valueColor.G, valueColor.B, valueColor.A }.toInt();
+
+
+                    // Debug.WriteLine("value: " + value);
+                    // A/transparent 255 causes NaN / its rgba
                     var data = new Data() // when actually consuming in the future it must be better to make prediction here
                     {
                         average = average,
                         x = x,
                         y = y,
-                        value = lowQuality.GetPixel(x, y).ToArgb()
+                        value = value
                     };
                     dataArray[x, y] = data;
                     data = null;
+                    
                 }
             }
             return dataArray;

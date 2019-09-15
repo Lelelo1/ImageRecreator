@@ -23,10 +23,9 @@ namespace ImageRecreator
         [ColumnName("Total")]// try using average color
         public float[] total;
         */
+        /*
         [ColumnName("Average")]
         public float average;
-        [ColumnName("AmountWhite")]
-        public float amountWhite;
         [ColumnName("X")]
         public float x;
         [ColumnName("Y")]
@@ -35,7 +34,22 @@ namespace ImageRecreator
         public float value;
         [ColumnName("Label")]
         public float original; // some E+07 values are added when cast to float - otherwise equal
+        */
+        [ColumnName("Average")]
+        public float average;
 
+        [ColumnName("Value")]
+        public float value;
+
+        [ColumnName("X")]
+        public float x;
+        [ColumnName("Y")]
+        public float y;
+
+        [ColumnName("Label")]
+        public float original;
+
+        
         /* When running automl... Was also unable to run b total as bitmap
          * System.ArgumentException: 'Only supported feature column types are Boolean, Single, and String. Please change the feature column index of type Vector<Int32> to one of the supported types.
 Parameter name: trainData'

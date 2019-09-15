@@ -7,7 +7,7 @@ using System.Diagnostics;
 using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
 using System.Linq;
-
+using System.Drawing.Drawing2D;
 namespace ImageRecreator
 {
     public class Train
@@ -20,7 +20,7 @@ namespace ImageRecreator
             foreach(var original in originalImages)
             {
                 // 0.001f takes 2 min
-                imageData.AddRange(ImageData(original, original.LowQualityImages(2), 0.0001f));
+                imageData.AddRange(ImageData(original, original.LowQualityImages(2)));
             }
             /*
             for (int i = 0; i < imageData.Count; i += 100000)
@@ -42,16 +42,30 @@ namespace ImageRecreator
             Debug.WriteLine("imageData count: " + imageData.Count);
 
             // AutoML(imageData);
-            
-            
-            var trainingDataView = mlContext.Data.LoadFromEnumerable<Data>(imageData);
+            imageData = imageData.OrderBy(a => new Guid()).ToList();
+            var partialImageData = new List<Data>();
+
+            var amountToTake = imageData.Count / 100;
+
+            for(int i = 0; i < amountToTake; i++)
+            {
+                partialImageData.Add(imageData[i]);
+            }
+
+            Debug.WriteLine("using " + partialImageData.Count + " of imageData");
+
+            var trainingDataView = mlContext.Data.LoadFromEnumerable<Data>(partialImageData);
             Debug.WriteLine("starting training");
-            var dataProccessPipeLine = mlContext.Transforms.CopyColumns("Label", "Label")
-                .Append(mlContext.Transforms.Concatenate("Features","Average", "AmountWhite", "X", "Y", "Value"));
+            /*
+            var dataProccessPipeline = mlContext.Transforms.CopyColumns("Label", "Label")
+                .Append(mlContext.Transforms.Concatenate("Features","Average", "X", "Y", "Value"));
+            */
+            var dataProccessPipeline = mlContext.Transforms.Concatenate("Features", "Average", "X", "Y", "Value")
+                .Append(mlContext.Transforms.SelectColumns("Features", "Label"));
 
             var trainer = mlContext.Regression.Trainers.Sdca(labelColumnName: "Label", featureColumnName: "Features");
 
-            var trainingPipeline = dataProccessPipeLine.Append(trainer);
+            var trainingPipeline = dataProccessPipeline.Append(trainer);
 
             var model = trainingPipeline.Fit(trainingDataView);
 
@@ -63,86 +77,58 @@ namespace ImageRecreator
         static List<Data> ImageData(Bitmap original, List<Bitmap> lowImages, float percentPixelsToTake = 1)
         {
             var imageData = new List<Data>();
-            Debug.WriteLine("original: " + original.Name());
-            for(int i = 0; i < lowImages.Count; i ++)
+            // Debug.WriteLine("original: " + original.Name());
+            Debug.WriteLine("original");
+            
+            for (int i = 0; i < lowImages.Count; i ++)
             {
-                lowImages[i].Name(original.Name() + "q" + i); // for test purpose
-                imageData.AddRange(CreateDataFrom(original, lowImages[i], percentPixelsToTake));
-
+                // lowImages[i].Name(original.Name() + "q" + i); // for test purpose
+                imageData.AddRange(CreateDataFrom(original, lowImages[i]));
             }
-
+            
             Debug.WriteLine("created imageData: " + imageData.Count + " = " + lowImages.Count + " * " + " width: " + original.Width + " * " + " height: " + original.Height);
             return imageData;
         }
 
-        static List<Data> CreateDataFrom(Bitmap original, Bitmap lowImage, float percent = 1)
+        static List<Data> CreateDataFrom(Bitmap original, Bitmap lowImage)
         {
+    
             Debug.WriteLine("Creating data...");
             var imageData = new List<Data>();
-
-
-            // getting random indexes
-            var lowImageArray = lowImage.ToValueArray();
-            Debug.WriteLine("lowImageArray created");
-            var amount = (int )Math.Round(percent * lowImageArray.Count());
-            Debug.WriteLine("Taking amount: " + amount);
-            
-            int index = 0;
-            while(index < amount)
+            var averageColor = original.GetAverageColor();
+            var average = new byte[4] { averageColor.R, averageColor.G, averageColor.B, averageColor.A }.toInt();
+            for (int x = 0; x < lowImage.Width; x ++)
             {
-                var randomX = RandomizedIndex(lowImage.Width);
-                var randomY = RandomizedIndex(lowImage.Height);
-                // Debug.WriteLine("i: " + index + ". x: " + randomX + " and y:" + randomY);
-                int value = lowImage.GetPixel(randomX, randomY).ToArgb();
-                int originalValue = original.GetPixel(randomX, randomY).ToArgb();
-                var data = new Data
+                for (int y = 0; y < lowImage.Height; y++ )
                 {
-                    x = randomX,
-                    y = randomY,
-                    value = value,
-                    original = originalValue
-                };
-                if(!imageData.Exists((d) => (int)d.x != (int)data.x && (int)d.y != (int)data.y)) // not taking -1
-                {
-                    // data.Print();
-                    imageData.Add(data);
-                    index++;
-                }
-                data = null;
-            }
-            Debug.WriteLine("adding total/average to data...");
-            
-            var average = lowImageArray.Average();
-            var whiteAmount = lowImage.GetPixelsCountOf(-1);
-            Debug.WriteLine(average);
-            foreach(var d in imageData)
-            {
-                d.average = average; // <-- added afterwards is faster due to .exists
-                d.amountWhite = whiteAmount;
-            }
-            Debug.WriteLine("created " + imageData.Count + " of imageData from " + lowImage.Name());
-            
-            /*
-            for (int x = 0; x < lowImage.Width; x++)
-            {
-                for (int y = 0; y < lowImage.Height; y++)
-                {
-
+                    var valueColor = lowImage.GetPixel(x, y);
+                    var originalColor = original.GetPixel(x, y);
+                    var value = new byte[4] { valueColor.R, valueColor.G, valueColor.B, valueColor.A }.toInt();
+                    var originalValue = new byte[4] { originalColor.R, originalColor.G, originalColor.B, originalColor.A }.toInt();
+                    /*
+                    Debug.WriteLine("average: " + average);
+                    Debug.WriteLine("value:" + value);
+                    Debug.WriteLine("original: " + originalValue);
+                    */
+                    // Debug.WriteLine("average: " + average + ", value: " + value + ", original: " + originalValue);
                     var data = new Data()
                     {
-                        total = lowImageArray,
+                        average = average,
+   
+                        value = value,
+
                         x = x,
                         y = y,
-                        value = (float)lowImage.GetPixel(x, y).ToArgb(),
-                        original = (float)lowImage.GetPixel(x, y).ToArgb()
+
+                        original = originalValue,
                     };
                     imageData.Add(data);
-                    // data.Print();
+                    data = null;
                 }
             }
-            */
             return imageData;
         }
+
 
         static void AutoML(List<Data> imageData)
         {

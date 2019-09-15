@@ -56,3 +56,12 @@ got myimgq0rlongfastreeregression
 automl never said anything of which colmns could be dropped
 
 FastTReeRegression introduces squares. Probabbly no good.
+
+---
+
+Need faster recreation. Try use byte array instead.
+
+Try train with randomized images instead.
+
+in the byte array the A (transparency) should be last rgba: https://en.wikipedia.org/wiki/RGBA_color_space
+while in C# color from  A is first: ARGB

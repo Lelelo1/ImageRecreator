@@ -60,7 +60,7 @@ namespace ImageRecreator
 
             /*
             // train
-            var originalUrl = ImageUrls(2);
+            var originalUrl = RandomImages(2);
             var originals = Images(originalUrl);
             for(int i = 0; i < originalUrl.Count; i++)
             {
@@ -80,11 +80,65 @@ namespace ImageRecreator
             original.Save("myimg.jpg");
             lowQuality.Save("myimgq0.jpg");
             restored.Save("myimgq0r.jpg");
-            Debug.WriteLine("end");
             
+
+
+            /*
+            // q0 is much smaller even with random image
+            var original = new Bitmap(2448, 3264);
+            original.Name("myrandom");
+            original.Random().Save("myrandom.jpg");
+            var lowImage = original.LowQualityImages(2)[0];
+            lowImage.Name("myrandomq0");
+            lowImage.Save("myrandomq0.jpg");
+            */
+
+            /*
+            // train
+            var images = RandomImages(1, 2448, 3264);
+            Train.Run(images);
+            */
+
+            /*
+            // can use bitconverter bak and forth
+            byte b = 2;
+            byte[] a = new byte[4] { 255, 255, 255, 255 };
+            var s = BitConverter.ToSingle(a);
+            var c = Color.FromArgb(10, 10, 10, 10);
+            Debug.WriteLine("argb: " + c.ToArgb());
+            var f = BitConverter.ToSingle(a);
+            Debug.WriteLine("f: " + f);
+            var arr = BitConverter.GetBytes(f);
+            int index = 0; 
+            foreach (var by in arr)
+            {
+                Debug.WriteLine(by);
+                index++;
+            }
+            */
+            /*
+            // argb vs rgba
+            var f = new byte[4] { 135, 135, 136, 135 }.toInt();
+            Debug.WriteLine("f: " + f);
+            Debug.WriteLine(Color.FromArgb(f).R + ", " + Color.FromArgb(f).G + ", " + Color.FromArgb(f).B + ", " + Color.FromArgb(f).A);
+            new Bitmap(200, 200).Paint(f).Save("./animg.jpg");
+           */
+            Debug.WriteLine("end");
+        }
+        
+        static List<Bitmap> RandomImages(int amount, int width, int height)
+        {
+            var original = new Bitmap(width, height);
+            var list = new List<Bitmap>();
+
+            for(int i = 0; i < amount; i++)
+            {
+                list.Add(original.Random());
+            }
+            return list;
         }
 
-
+        // is bounds width: 2448, height: 3264
 
         // https://stackoverflow.com/questions/11801630/how-can-i-convert-image-url-to-system-drawing-image
         static List<Bitmap> Images(List<string> imageUrls)

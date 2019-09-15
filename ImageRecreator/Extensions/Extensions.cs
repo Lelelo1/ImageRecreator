@@ -33,10 +33,10 @@ namespace ImageRecreator
         }
         public static void Print(this Data d)
         {
-
+            /*
             Console.WriteLine("average: " + d.average +
             ", index: (x: " + d.x + ", y: " + d.y + "), value: " + d.value + ", original: " + d.original);
-
+            */
         }
  
         public static List<Bitmap> LowQualityImages(this Bitmap image, int parts)
@@ -50,7 +50,8 @@ namespace ImageRecreator
                 Debug.WriteLine("quality: " + q);
             }
 
-            Debug.WriteLine("Created {0} low quality images for " + image.Name(), list.Count);
+            // Debug.WriteLine("Created {0} low quality images for " + image.Name(), list.Count);
+            Debug.WriteLine("Created {0} low quality images ", list.Count);
             return list;
         }
         
@@ -144,7 +145,27 @@ namespace ImageRecreator
             }
             return array;
         }
+        // https://stackoverflow.com/questions/21454122/byte-array-to-float-conversion-c-sharp
+        public static int toInt(this byte[] bytes)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes); // Convert big endian to little endian
+            }
+            int myFloat = BitConverter.ToInt32(bytes, 0);
+            return myFloat;
+        }
+        public static byte[] toBytes(this int value)
+        {
 
+            var bytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+            {
+                Debug.WriteLine("true");
+                Array.Reverse(bytes);
+            }
+            return bytes;
+        }
 
     }
     
