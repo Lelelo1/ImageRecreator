@@ -23,8 +23,10 @@ namespace ImageRecreator
             {
                 Console.WriteLine(detail);
             }
-            Console.WriteLine("best run");
+            Console.WriteLine("best run...");
             Console.WriteLine(result.BestRun);
+            Console.WriteLine("runtimeSeconds: " + result.BestRun.RuntimeInSeconds);
+            Console.WriteLine("estimator: " + result.BestRun.Estimator);
             Console.WriteLine("trainerName " + result.BestRun.TrainerName);
             Console.WriteLine("validationMetrics " + result.BestRun.ValidationMetrics);
 

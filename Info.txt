@@ -22,3 +22,37 @@ One strategy is to include as much info as possible in Data and run automl
 0.0001f, parts 5, 10 original images:
 
 not much difference. no horizontal lines.
+
+--
+
+auto ml:
+	[ColumnName("Average")]
+        public float average;
+        [ColumnName("AmountWhite")] //<-- never added into the trainer though
+        public float amountWhite;
+        [ColumnName("X")]
+        public float x;
+        [ColumnName("Y")]
+        public float y;
+        [ColumnName("Value")]
+        public float value;
+        [ColumnName("Label")]
+        public float original;
+
+10 images, 10 parts and 0.0001f percent 70min:
+
+BestRun:
+LossFunction = 82500759481.01474
+MeanAbsoluteError = 177187.98968335858
+MeanSquaredError = 82500759693.8049
+RSquared = 0.99581643758822758
+RootMeanSquaredError = 287229.454781025
+
+RuntimeInSeconds = 41.6010725
+TrainerName = "FastTreeRegression"
+
+got myimgq0rlongfastreeregression
+
+automl never said anything of which colmns could be dropped
+
+FastTReeRegression introduces squares. Probabbly no good.

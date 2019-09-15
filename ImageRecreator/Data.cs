@@ -25,6 +25,8 @@ namespace ImageRecreator
         */
         [ColumnName("Average")]
         public float average;
+        [ColumnName("AmountWhite")]
+        public float amountWhite;
         [ColumnName("X")]
         public float x;
         [ColumnName("Y")]
