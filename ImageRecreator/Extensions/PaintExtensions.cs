@@ -79,6 +79,13 @@ namespace ImageRecreator
             return count;
         }
 
+        /* log when creating 5 random images with: bounds width: 2448, height: 3264 
+         *  Random image. average color Color [A=44, R=127, G=127, B=127]
+            Random image. average color Color [A=44, R=127, G=127, B=127]
+            Random image. average color Color [A=43, R=130, G=130, B=130]
+            Random image. average color Color [A=44, R=127, G=127, B=127]   
+            Random image. average color Color [A=44, R=127, G=127, B=127]
+         */
         public static Bitmap Random(this Bitmap bitmap)
         {
             for(int x = 0; x < bitmap.Width; x ++)
@@ -93,6 +100,7 @@ namespace ImageRecreator
                     bitmap.SetPixel(x, y, Color.FromArgb(r, g, b, a));
                 }
             }
+            // Debug.WriteLine("Random image. average color " + bitmap.GetAverageColor());
             return bitmap;
         }
         private static Random random = new Random();

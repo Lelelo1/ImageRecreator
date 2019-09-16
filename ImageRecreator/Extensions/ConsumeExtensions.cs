@@ -35,7 +35,7 @@ namespace ImageRecreator
                     // just to to log comparison
                     var originalColor = original.GetPixel(x, y);
                     var originalColorValue = new byte[4] { originalColor.R, originalColor.G, originalColor.B, originalColor.A }.toInt();
-                    /*
+                    
                     if (original == null)
                     {
                         Debug.WriteLine("value: " + data.value + " -> " + " output: " + output.outputValue);
@@ -45,7 +45,7 @@ namespace ImageRecreator
                         Debug.WriteLine("value: " + (int)data.value + " -> " + " output: "
                             + (int)output.outputValue + ". original: " + (int)originalColorValue);
                     }
-                    */
+                    
                     var byteArray = BitConverter.GetBytes(output.outputValue);
 
                     predictedBitmap.SetPixel(x, y, Color.FromArgb(byteArray[3] ,byteArray[0], byteArray[1], byteArray[2]));
@@ -79,15 +79,17 @@ namespace ImageRecreator
                     var valueColor = lowQuality.GetPixel(x, y);
                     // Debug.WriteLine("r: " + valueColor.R + ", g: " + valueColor.G + ", b: " + valueColor.B + ", a: " + valueColor.A);
                     var value = new byte[4] { valueColor.R, valueColor.G, valueColor.B, valueColor.A }.toInt();
-
+                    
 
                     // Debug.WriteLine("value: " + value);
                     // A/transparent 255 causes NaN / its rgba
                     var data = new Data() // when actually consuming in the future it must be better to make prediction here
                     {
-                        average = average,
-                        x = x,
-                        y = y,
+                        // average = average,
+                        // x = x,
+                        // y = y,
+                        // percentX = x/ lowQuality.Width,
+                        // percentY = y / lowQuality.Height,
                         value = value
                     };
                     dataArray[x, y] = data;

@@ -20,7 +20,7 @@ namespace ImageRecreator
             foreach(var original in originalImages)
             {
                 // 0.001f takes 2 min
-                imageData.AddRange(ImageData(original, original.LowQualityImages(2)));
+                imageData.AddRange(ImageData(original, original.LowQualityImages(100)));
             }
             /*
             for (int i = 0; i < imageData.Count; i += 100000)
@@ -40,8 +40,8 @@ namespace ImageRecreator
             // varvector complaint
 
             Debug.WriteLine("imageData count: " + imageData.Count);
-
             // AutoML(imageData);
+            /*
             imageData = imageData.OrderBy(a => new Guid()).ToList();
             var partialImageData = new List<Data>();
 
@@ -51,17 +51,16 @@ namespace ImageRecreator
             {
                 partialImageData.Add(imageData[i]);
             }
-
+            
             Debug.WriteLine("using " + partialImageData.Count + " of imageData");
-
-            var trainingDataView = mlContext.Data.LoadFromEnumerable<Data>(partialImageData);
-            Debug.WriteLine("starting training");
-            /*
-            var dataProccessPipeline = mlContext.Transforms.CopyColumns("Label", "Label")
-                .Append(mlContext.Transforms.Concatenate("Features","Average", "X", "Y", "Value"));
             */
-            var dataProccessPipeline = mlContext.Transforms.Concatenate("Features", "Average", "X", "Y", "Value")
-                .Append(mlContext.Transforms.SelectColumns("Features", "Label"));
+            var trainingDataView = mlContext.Data.LoadFromEnumerable<Data>(imageData);
+            Debug.WriteLine("starting training");
+            
+            // must copycolumns for some reason ( can't selectcolumns)
+            var dataProccessPipeline = mlContext.Transforms.CopyColumns("Label", "Label")
+                .Append(mlContext.Transforms.Concatenate("Features", "Value"));
+            
 
             var trainer = mlContext.Regression.Trainers.Sdca(labelColumnName: "Label", featureColumnName: "Features");
 
@@ -86,14 +85,14 @@ namespace ImageRecreator
                 imageData.AddRange(CreateDataFrom(original, lowImages[i]));
             }
             
-            Debug.WriteLine("created imageData: " + imageData.Count + " = " + lowImages.Count + " * " + " width: " + original.Width + " * " + " height: " + original.Height);
+            // Debug.WriteLine("created imageData: " + imageData.Count + " = " + lowImages.Count + " * " + " width: " + original.Width + " * " + " height: " + original.Height);
             return imageData;
         }
 
         static List<Data> CreateDataFrom(Bitmap original, Bitmap lowImage)
         {
     
-            Debug.WriteLine("Creating data...");
+            // Debug.WriteLine("Creating data...");
             var imageData = new List<Data>();
             var averageColor = original.GetAverageColor();
             var average = new byte[4] { averageColor.R, averageColor.G, averageColor.B, averageColor.A }.toInt();
@@ -111,14 +110,20 @@ namespace ImageRecreator
                     Debug.WriteLine("original: " + originalValue);
                     */
                     // Debug.WriteLine("average: " + average + ", value: " + value + ", original: " + originalValue);
+                    // Debug.WriteLine("width: " + lowImage.Width + " height: " + lowImage.Height);
+                    var percentX = x / (float)lowImage.Width;
+                    var percentY = y / (float)lowImage.Height;
+                    // Debug.WriteLine("x: " + percentX + " and y: " + percentY);
                     var data = new Data()
                     {
-                        average = average,
-   
+                        // average = average,
+
                         value = value,
 
-                        x = x,
-                        y = y,
+                        // x = x,
+                        // y = y,
+                        // percentX = percentX,
+                        // percentY = percentY,
 
                         original = originalValue,
                     };

@@ -47,7 +47,7 @@ namespace ImageRecreator
             for(int q = 0; q < 100; q += s)
             {
                 list.Add(LowQualityImage(image, q));
-                Debug.WriteLine("quality: " + q);
+                // Debug.WriteLine("quality: " + q);
             }
 
             // Debug.WriteLine("Created {0} low quality images for " + image.Name(), list.Count);
@@ -102,34 +102,28 @@ namespace ImageRecreator
         {
             return list.Find((t) => t.bitmap == bitmap).name;
         }
+        /*
         public static string Name(this float[] imageFloatArray)
         {
-            return list.Find((t) => Enumerable.SequenceEqual(t.bitmap.ToValueArray(), imageFloatArray)).name;
+            return list.Find((t) => Enumerable.SequenceEqual(t.bitmap.ToIntValueArray(), imageFloatArray)).name;
         }
-        public static float[] ToValueArray(this Bitmap image)
+        */
+        public static List<int> ToIntValueArray(this Bitmap bitmap)
         {
-            var array = new float[image.Width * image.Height];
-            /* too slow
-            for (int i = 0; i < array.Length; i ++)
+            var list = new List<int>();
+            for(int x = 0; x < bitmap.Width; x ++)
             {
-                for (int x = 0; x < image.Width; x++)
+                for(int y = 0; y < bitmap.Height; y ++)
                 {
-                    for (int y = 0; y < image.Height; y++)
-                    {
-                        array[i] = image.GetPixel(x, y).ToArgb();
-                    }
+                    var color = bitmap.GetPixel(x, y);
+                    list.Add(new byte[4] { color.R, color.G, color.B, color.A }.toInt());
                 }
             }
-            */
-
-            var float2DArray = image.To2DValueArray();
-
-        https://stackoverflow.com/questions/5132397/fast-way-to-convert-a-two-dimensional-array-to-a-list-one-dimensional
-            // buffer copy does not effect the order of the elements - so 2d -> 1d -> 2D is possible.
-            Buffer.BlockCopy(float2DArray, 0, array, 0, array.Length * sizeof(float));
-
-            return array;
+            return list;
         }
+
+
+        
         static float[,] To2DValueArray(this Bitmap image)
         {
             var array = new float[image.Width, image.Height];

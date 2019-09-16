@@ -35,17 +35,25 @@ namespace ImageRecreator
         [ColumnName("Label")]
         public float original; // some E+07 values are added when cast to float - otherwise equal
         */
+        /*
         [ColumnName("Average")]
         public float average;
+        */
 
         [ColumnName("Value")]
         public float value;
-
+        /*
         [ColumnName("X")]
         public float x;
         [ColumnName("Y")]
         public float y;
-
+        */
+        /*
+        [ColumnName("PercentX")]
+        public float percentX;
+        [ColumnName("PercentY")]
+        public float percentY;
+        */
         [ColumnName("Label")]
         public float original;
 

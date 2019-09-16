@@ -65,3 +65,12 @@ Try train with randomized images instead.
 
 in the byte array the A (transparency) should be last rgba: https://en.wikipedia.org/wiki/RGBA_color_space
 while in C# color from  A is first: ARGB
+
+
+---
+
+120 / 630 with one pixel. = 0.190476
+
+346 / 822 with 100 pixel. = 0,420924
+
+A feature should probably be size of the image

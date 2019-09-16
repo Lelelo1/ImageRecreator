@@ -69,7 +69,7 @@ namespace ImageRecreator
             Train.Run(originals);
             */
 
-            
+            /*
             //consume
             var urls = ImageUrls(1);
             var original = Images(urls)[0];
@@ -80,8 +80,7 @@ namespace ImageRecreator
             original.Save("myimg.jpg");
             lowQuality.Save("myimgq0.jpg");
             restored.Save("myimgq0r.jpg");
-            
-
+            */
 
             /*
             // q0 is much smaller even with random image
@@ -95,7 +94,8 @@ namespace ImageRecreator
 
             /*
             // train
-            var images = RandomImages(1, 2448, 3264);
+            var images = RandomImages(20000, 1, 1);
+            Debug.WriteLine("images count: " + images.Count);
             Train.Run(images);
             */
 
@@ -123,6 +123,21 @@ namespace ImageRecreator
             Debug.WriteLine(Color.FromArgb(f).R + ", " + Color.FromArgb(f).G + ", " + Color.FromArgb(f).B + ", " + Color.FromArgb(f).A);
             new Bitmap(200, 200).Paint(f).Save("./animg.jpg");
            */
+            
+
+            var bitmap = new Bitmap(100, 100);
+            bitmap.Name("original");
+            for(int x = 0; x < bitmap.Width; x ++)
+            {
+                for(int y = 0; y < bitmap.Height ; y ++)
+                {
+                    bitmap.SetPixel(x, y, Color.Red);
+                }
+            }
+            // bitmap.SetPixel(0, 0, Color.Black);
+            bitmap.Save("./myimg.jpg");
+            var low = bitmap.LowQualityImages(2)[0];
+            low.Save("./mymgq0.jpg");
             Debug.WriteLine("end");
         }
         
