@@ -73,4 +73,4 @@ while in C# color from  A is first: ARGB
 
 346 / 822 with 100 pixel. = 0,420924
 
-A feature should probably be size of the image
+A feature should probably be size of the image. No. size per pixel.

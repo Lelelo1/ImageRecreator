@@ -56,17 +56,20 @@ namespace ImageRecreator
         }
         
         // https://stackoverflow.com/questions/4161873/reduce-image-size-c-sharp
-        static Bitmap LowQualityImage(Bitmap image, int quality)
+        static Bitmap LowQualityImage(Bitmap image, int quality, string encoderInfo = "Image/bmp")
         {
-            //var img = new Bitmap(image); // can't use clone
-            var img = (Bitmap)image.Clone();
+            /*
+            var img = new Bitmap(image); // can't use clone ?
+            // var img = (Bitmap)image.Clone();
+            */
+            var img = Copy(image);
             if (quality < 0 || quality > 100)
                 throw new ArgumentOutOfRangeException("quality must be between 0 and 100.");
 
             // Encoder parameter for image quality 
             EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
             // JPEG image codec 
-            ImageCodecInfo jpegCodec = GetEncoderInfo("image/jpeg");
+            ImageCodecInfo jpegCodec = GetEncoderInfo("image/bmp");
             EncoderParameters encoderParams = new EncoderParameters(1);
             encoderParams.Param[0] = qualityParam;
             var memoryStream = new MemoryStream();
@@ -89,7 +92,18 @@ namespace ImageRecreator
             return null;
         }
 
-   
+        static Bitmap Copy(this Bitmap bitmap)
+        {
+            var copy = new Bitmap(bitmap.Width, bitmap.Height);
+            for(int x = 0; x < bitmap.Width; x ++)
+            {
+                for(int y = 0; y < bitmap.Height; y ++)
+                {
+                    copy.SetPixel(x, y, bitmap.GetPixel(x, y));
+                }
+            }
+            return copy;
+        }
         static List<TestImage> list = new List<TestImage>();
         public static void Name(this Bitmap bitmap, string name) {
             if (list.Exists((t) => t.bitmap == bitmap || t.name == name)) {
@@ -160,7 +174,26 @@ namespace ImageRecreator
             }
             return bytes;
         }
-
+        
+        public static int MemorySizePerPixel(this Bitmap bitmap, ImageFormat imageFormat)
+        {
+            return MemorySize(bitmap, imageFormat);
+        }
+        // https://stackoverflow.com/questions/22012789/checking-an-image-file-size-in-bytes
+        static int MemorySize(Bitmap bitmap, ImageFormat imageFormat)
+        {
+            /* return same size for lowqualityimmage and original image
+            using(var memoryStream = new MemoryStream())
+            {
+                bitmap.Save(memoryStream, imageFormat);
+                return (int)memoryStream.Length;
+            }
+            */
+            
+            bitmap.Save("./getMemorySizeTemp");
+            return (int) new FileInfo("./getMemorySizeTemp").Length;
+            
+        }
     }
     
     class TestImage

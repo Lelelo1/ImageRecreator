@@ -125,7 +125,7 @@ namespace ImageRecreator
            */
             
 
-            var bitmap = new Bitmap(100, 100);
+            var bitmap = new Bitmap(1, 1);
             bitmap.Name("original");
             for(int x = 0; x < bitmap.Width; x ++)
             {
@@ -135,8 +135,11 @@ namespace ImageRecreator
                 }
             }
             // bitmap.SetPixel(0, 0, Color.Black);
+            Debug.WriteLine("Original size per pixel: " + bitmap.MemorySizePerPixel(ImageFormat.Bmp));
             bitmap.Save("./myimg.jpg");
             var low = bitmap.LowQualityImages(2)[0];
+            low.SetPixel(0, 0, Color.Yellow);
+            Debug.WriteLine("lowQualityImage size per pixel: " + low.MemorySizePerPixel(ImageFormat.Bmp));
             low.Save("./mymgq0.jpg");
             Debug.WriteLine("end");
         }
